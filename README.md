@@ -1,93 +1,150 @@
-# Вводная лекция про бэкенд
+# Url-shortener application 
 
 
+## Описание и технические требования
 
-## Getting started
+На лекции мы проследили за процессом, как разрабатывать новые крутые продуктовые фичи в нашем сервисе Такси. Давайте реализуем что-то похожее на небольшом проекте `UrlShortener`. Он всего лишь умеет укорачивать урлы и дает немного управления над созданными редиректами (можно посмотреть статистику использования и удалить ссылку).
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Представьте, что нам необходимо вывести наш сервис `UrlShortener` на новый качественный уровень на рынке подобных систем. Надо завоевать долю на рынке и нарастить количество активных пользователей с X до Y %. Это стратегическая цель. Но как ее достичь?
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Дальше задание разделяется на 2 пути: вы можете взять описанную ниже фичу либо придумать свою крутую. Главное — реализовать в коде и показать путь фичи от идеи до воплощения. Если пойдете по второму пути, то все равно нужно реализовать в коде предложенную фичу, чтобы наши автотесты проверили ваш код.
 
-## Add your files
+В требованиях к заданию есть творческая составляющая — нужно будет написать отчет в формате md. Если идете путем своей фичи - описываете в этой части свою фичу, если нет — то нашу. Подробности ниже.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+### Давайте сначала присмотримся к фиче, предложенной нами
 
+Кто-то проанализировал рынок за вас и решил, что киллер-фичей, которую так необходимо реализовать во что бы то ни стало, является "VIP ссылки"!
+
+Что это? Всё просто. Вы помните, что `UrlShortener` возвращает произвольную комбинацию символов в укороченном URL. А в VIP ссылках, это не так: пользователь сам указывает, какой будет его короткая ссылка, конечно, только если заданная им комбинация символов свободна.
+
+Формальное описание интерфейса на OpenAPI 3.0 тут [openapi.yaml](openapi.yaml)
+
+А ниже для общего представления неформальное описание.
+
+make_shorter на входе получает:
 ```
-cd existing_repo
-git remote add origin https://git.yandex-academy.ru/school/2024-06/backend/python/homeworks/intro_lecture.git
-git branch -M master
-git push -uf origin master
+url = "user-defined-long-url"
+optional vip_key = "user-defined-symbols"
+optional time_to_live = 1
+optional time_to_live_unit = SECONDS, MINUTES, HOURS, DAYS
 ```
 
-## Integrate with your tools
+Максимальный TimeToLive не должен превышать 2 дней (иначе красивые vip ссылки закончатся).
 
-- [ ] [Set up project integrations](https://git.yandex-academy.ru/school/2024-06/backend/python/homeworks/intro_lecture/-/settings/integrations)
+В ответ на операцию приходит
+```
+short_url = "example.com/xyz" - короткая ссылка
+secret_key - ключ для управления ссылкой
+```
 
-## Collaborate with your team
+Ну или ошибка 400, если есть какие-то проблемы с входными параметрами, например, если vip_key уже занят или переданы невалидные значения для TTL.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+### А что если у меня своя классная идея?
+Все просто - опиши ее и реализуй, а потом презентуй в коротком (до 2 минут) видео ролике - загрузи видео на любой открытый видеохостинг - ютуб, например. В ролике необходимо показать функциональность твоей фичи. Не забудь реализовать базовую фичу "vip ссылки", она будет проверена автоматически.
 
-## Test and Deploy
+### Требования к результату домашней работы
 
-Use the built-in continuous integration in GitLab.
+0. Форкнуть (fork) данный репозиторий с заданием в свой репозиторий;
+1. Необходимо описать идею (vip ссылки или свою) в 1-2 предложениях;
+2. Сформулировать продуктовые гипотезы - 1-2 штуки в формате, как было на лекции;
+3. Оценить примерные трудозатраты (попробуй аргументировать оценку, например, требуемым количеством новых классов, объемом кода);
+4. Придумать, можно ли сделать MVP, если да, то как он будет выглядеть и сколько это займет времени;
+5. Проработать архитектуру и описать ее в тексте (в качестве формального описания подойдут openapi описание, диаграммы классов, компонентные диаграммы - в зависимости от того, что лучше отразит суть изменений и, что по вашему мнению будет понятнее проверяющему);
+6. Реализовать полное решение идеи в коде. Если пошли по пути разработки своей супер-идеи, то не забудьте реализовать vip ссылки;
+7. Добиться чтобы все предоставленные в исходном репозитории тесты на vip ссылки проходили успешно, внося правки в код сервиса, а не тестов :) ;
+8. Придумать AB-тест - какие выборки пользователей будут в эксперименте? Какие параметры фичи будем проверять в каждой выборке?
+9. Выбрать и описать набор наблюдаемых продуктовых метрик, по которым можно сделать вывод, что фича "взлетела". Какие значения метрик ожидаем увидеть?
+10. Сделать отчет в файле README.md (имеющийся удалить, свой добавить) в своем репозитории с ответами на эти вопросы.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Если идешь путем разработки своей фичи, то отчет пиши про неё. Если реализуешь только vip ссылки, то отчет по ней.
 
-***
+Если что-то непонятно, смело задавай вопросы своему ментору.
 
-# Editing this README
+## Работа с приложением
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### Требования
 
-## Suggestions for a good README
+Необходимо, чтобы были установлены следующие компоненты:
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+- `Docker` и `docker-compose`
+- `Python 3.10`
+- `Poetry`
 
-## Name
-Choose a self-explaining name for your project.
+### Установка
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+1. Создание виртуального окружения и установка зависимостей
+```commandline
+poetry install
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+2. Активация виртуального окружения
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+```commandline
+poetry shell
+```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Запуск
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+0. Создать `.env` файл с этими переменными (можно командой `make env`)
+```dotenv
+POSTGRES_DB=...
+POSTGRES_USER=...
+POSTGRES_PASSWORD=...
+POSTGRES_HOST=...
+POSTGRES_PORT=5432
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+2. Создание базы в docker-контейнере (чтобы не работать с локальной базой):
+```commandline
+make db
+```
+2. Выполнение миграций:
+```commandline
+make migrate head
+```
+3. Запуск приложения:
+```commandline
+make run
+```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Посмотреть документацию можно после запуска приложения по адресу `http://127.0.0.1:8080/swagger`.
+### Тестирование
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+- Запуск тестов со всеми необходимыми флагами:
+```commandline
+make test
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+- Запуск тестов с генерацией отчета о покрытии:
+```commandline
+make test-cov
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### Статический анализ
 
-## License
-For open source projects, say how it is licensed.
+- Запуск линтеров
+```commandline
+make lint
+```
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- Запуск форматирования кода
+```commandline
+make format
+```
+
+### Дополнительные команды
+
+- Создание новой ревизии:
+```commandline
+make revision
+```
+- Открытие базы данных внутри Docker-контейнера:
+```commandline
+make open_db
+```
+
+- Вывести список всех команд и их описание:
+```commandline
+make help
+```
