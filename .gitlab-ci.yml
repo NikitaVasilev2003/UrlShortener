@@ -5,8 +5,8 @@ stages:
   - test
 
 variables:
-  ENROLLMENT_REPO_PATH: school/2023-06/enrollments
-  REPO_NAME: student-application-mock
+  ENROLLMENT_REPO_PATH: school/2024-06/backend/python/homeworks/
+  REPO_NAME: intro_lecture
   REPO_ID: 5963
   CALLBACK_URL: https://school.yandex.ru/integration/gitlab/result/
   ATTEMPT_NUMBER: 2
