@@ -8,7 +8,7 @@ pylint:
   stage: lint
   image: snakepacker/python:all
   before_script:
-    - python3.10 -m pip install poetry
+    - python3.12 -m pip install poetry
     - poetry install
   script:
     - poetry run pylint shortener tests
@@ -24,7 +24,7 @@ pytest:
     POSTGRES_PASSWORD: password
     DB_PATH: postgres
   before_script:
-    - python3.10 -m pip install poetry
+    - python3.12 -m pip install poetry
     - poetry install
     - wait-for-port postgres:5432
   script:
