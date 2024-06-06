@@ -26,6 +26,6 @@ pytest:
   before_script:
     - python3.12 -m pip install poetry
     - poetry install
-    - wait-for-port postgres:5432
+    - wait-for-port 5432
   script:
     - poetry run pytest --verbosity=2 --showlocals --log-level=DEBUG --cov=shortener
