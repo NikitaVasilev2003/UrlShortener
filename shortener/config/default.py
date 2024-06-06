@@ -1,5 +1,4 @@
 from os import environ
-import sys
 
 from pydantic_settings import BaseSettings
 
