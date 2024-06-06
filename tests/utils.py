@@ -3,7 +3,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Union
 
-from alembic.config import Config
+from alembic.config import Config # pylint: disable=import-error
 from configargparse import Namespace
 
 from shortener.config import get_settings

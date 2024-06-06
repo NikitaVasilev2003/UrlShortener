@@ -7,8 +7,8 @@ from types import SimpleNamespace
 from uuid import uuid4
 
 import pytest
-from alembic.command import upgrade
-from alembic.config import Config
+from alembic.command import upgrade # pylint: disable=import-error
+from alembic.config import Config # pylint: disable=import-error
 from httpx import AsyncClient
 from mock import AsyncMock
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
