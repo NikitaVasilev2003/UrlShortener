@@ -1,50 +1,33 @@
-image: matthewfeickert/docker-python3-ubuntu
+---
 
 stages:
-  - clone_repository
+  - lint
   - test
 
-variables:
-  ENROLLMENT_REPO_PATH: school/2024-06/backend/python/homeworks/
-  REPO_NAME: intro_lecture
-  REPO_ID: 5963
-  CALLBACK_URL: https://school.yandex.ru/integration/gitlab/result/
-  ATTEMPT_NUMBER: 2
-  SOLUTION_ID: 12345
-  MAX_SCORE: 100
-  EXTRA_ENV: ""
-  SUBMISSION_FILE_URL: test.txt
-  SUBMISSION_FILE_TYPE: txt
-  SUBMISSION_FILE_NAME: test.txt
-
-clone_repository:
-  stage: clone_repository
-  artifacts:
-    paths:
-      - $REPO_NAME
+pylint:
+  stage: lint
+  image: snakepacker/python:all
+  before_script:
+    - python3.12 -m pip install poetry
+    - poetry install
   script:
-    - export GIT_SSH_COMMAND='ssh -i $GIT_SSH_KEY -o IdentitiesOnly=yes -o StrictHostKeyChecking=no'
-    - git clone git@$CI_SERVER_HOST:$ENROLLMENT_REPO_PATH/$REPO_NAME.git
-    - rm -rf .git
+    - poetry run pylint shortener tests
 
-test:
+pytest:
   stage: test
-  environment:
-   name: solutions/$SOLUTION_ID
-   auto_stop_in: 30 days
+  image: snakepacker/python:all
+  services:
+    - name: postgres
   variables:
-    PARENT_PIPELINE_ID: $CI_PIPELINE_ID
-    ENROLLMENT_REPO_PATH_T: $ENROLLMENT_REPO_PATH
-    REPO_NAME_T: $REPO_NAME
-    REPO_ID_T: $REPO_ID
-    CALLBACK_URL_T: $CALLBACK_URL
-    ATTEMPT_NUMBER_T: $ATTEMPT_NUMBER
-    SOLUTION_ID_T: $SOLUTION_ID
-    MAX_SCORE_T: $MAX_SCORE
-    EXTRA_ENV_T: $EXTRA_ENV
-    SUBMISSION_FILE_URL_T: $SUBMISSION_FILE_URL
-    SUBMISSION_FILE_TYPE_T: $SUBMISSION_FILE_TYPE
-    SUBMISSION_FILE_NAME_T: $SUBMISSION_FILE_NAME
-  trigger:
-    include: test.gitlab-ci.yml
-    strategy: depend
+    POSTGRES_DB: shortener_db
+    POSTGRES_USER: master
+    POSTGRES_PASSWORD: password
+    POSTGRES_PORT: 5432
+    POSTGRES_HOST: postgres
+    DB_PATH: postgres
+  before_script:
+    - python3.12 -m pip install poetry
+    - poetry install
+    - wait-for-port postgres:5432
+  script:
+    - poetry run pytest --verbosity=2 --showlocals --log-level=DEBUG --cov=shortener
