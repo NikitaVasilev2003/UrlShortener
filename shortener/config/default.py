@@ -1,12 +1,13 @@
 from os import environ
+import sys
 
 from pydantic_settings import BaseSettings
 
 class MyInt(int):
     def __init__(self, s) -> None:
-        print(s)
+        print(s, file=sys.stderr)
         super().__init__(s)
-        print("Успех")
+        print("Успех", file=sys.stderr)
 
 class DefaultSettings(BaseSettings):
     """
