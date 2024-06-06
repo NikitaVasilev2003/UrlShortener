@@ -22,6 +22,8 @@ pytest:
     POSTGRES_DB: shortener_db
     POSTGRES_USER: master
     POSTGRES_PASSWORD: password
+    POSTGRES_PORT: 5432
+    POSTGRES_HOST: postgres
     DB_PATH: postgres
   before_script:
     - python3.12 -m pip install poetry
