@@ -43,7 +43,7 @@ class UrlStorage(DeclarativeBase):
     )
     dt_created = Column(
         TIMESTAMP(timezone=True),
-        server_default=func.now(),
+        server_default=func.now(),  # pylint: disable=not-callable
         nullable=False,
         doc="Date and time when string in table was created",
     )

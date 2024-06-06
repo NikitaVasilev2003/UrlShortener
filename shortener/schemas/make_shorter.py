@@ -16,4 +16,4 @@ class MakeShorterResponse(BaseModel):
     secret_key: UUID4
 
     class Config:
-        orm_mode = True
+        from_attributes = True

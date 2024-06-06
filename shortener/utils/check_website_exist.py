@@ -6,8 +6,8 @@ from aiohttp import ClientConnectorError, ClientSession, ClientTimeout
 async def check_website_exist(url: str) -> tuple[bool, str]:
     timeout = ClientTimeout(total=2.0)
     try:
-        async with ClientSession(timeout=timeout, connector_owner=False) as session:
-            async with session.get(url, allow_redirects=False) as response:
+        async with ClientSession(timeout=timeout, connector_owner=False, trust_env=True) as session:
+            async with session.get(url, allow_redirects=False, ssl=False) as response:
                 if response.status < 400:
                     return True, "Status code < 400"
                 return False, "Status code >= 400"

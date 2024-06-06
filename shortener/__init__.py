@@ -1,6 +1,7 @@
 """
 Сервис с REST API, позволяющий укорачивать ссылки.
 """
+
 __author__ = "Anfimov Dmitry"
 __maintainer__ = __author__
 

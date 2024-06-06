@@ -1,6 +1,6 @@
 from os import environ
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class DefaultSettings(BaseSettings):

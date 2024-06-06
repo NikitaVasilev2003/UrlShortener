@@ -129,7 +129,7 @@ async def data_sample(session) -> UrlStorage:
     """
     suffix = str(uuid4())[:5]
     new_object = UrlStorage(
-        long_url=f"https://{uuid4()}.com",
+        long_url=f"https://{uuid4()}.com/",
         short_url=suffix,
     )
     session.add(new_object)

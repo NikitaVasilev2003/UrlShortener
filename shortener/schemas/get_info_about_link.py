@@ -10,4 +10,4 @@ class GetInfoAboutLinkResponse(BaseModel):
     dt_created: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True

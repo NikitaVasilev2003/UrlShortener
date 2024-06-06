@@ -58,8 +58,7 @@ async def make_shorter(
     if exist:
         db_url.short_url = utils.url_from_suffix(db_url.short_url)
         return MakeShorterResponse.from_orm(db_url)
-
-    valid_site, message = await utils.check_website_exist(model.url)
+    valid_site, message = await utils.check_website_exist(str(model.url))
     if not valid_site:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
