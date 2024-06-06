@@ -2,6 +2,11 @@ from os import environ
 
 from pydantic_settings import BaseSettings
 
+class MyInt(int):
+    def __init__(self, s) -> None:
+        print(s)
+        super().__init__(s)
+        print("Успех")
 
 class DefaultSettings(BaseSettings):
     """
@@ -19,7 +24,7 @@ class DefaultSettings(BaseSettings):
     POSTGRES_DB: str = environ.get("POSTGRES_DB", "shortener_db")
     POSTGRES_HOST: str = environ.get("POSTGRES_HOST", "localhost")
     POSTGRES_USER: str = environ.get("POSTGRES_USER", "user")
-    POSTGRES_PORT: int = int(environ.get("POSTGRES_PORT", "5432")[-4:])
+    POSTGRES_PORT: MyInt = MyInt(environ.get("POSTGRES_PORT", "5432")[-4:])
     POSTGRES_PASSWORD: str = environ.get("POSTGRES_PASSWORD", "hackme")
     DB_CONNECT_RETRY: int = environ.get("DB_CONNECT_RETRY", 20)
     DB_POOL_SIZE: int = environ.get("DB_POOL_SIZE", 15)
