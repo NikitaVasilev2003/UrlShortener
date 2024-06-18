@@ -2,10 +2,9 @@ from sqlalchemy import Column, text
 from sqlalchemy.dialects.postgresql import INTEGER, TEXT, TIMESTAMP, UUID
 from sqlalchemy.sql import func
 
-from shortener.db import DeclarativeBase
+from shortener.db.models import Base
 
-
-class UrlStorage(DeclarativeBase):
+class UrlStorage(Base):
     __tablename__ = "url_storage"
 
     id = Column(
@@ -14,6 +13,13 @@ class UrlStorage(DeclarativeBase):
         server_default=func.gen_random_uuid(),
         unique=True,
         doc="Unique id of the string in table",
+    )
+    vip_key = Column(
+        TEXT,
+        nullable=True,
+        index=True,
+        unique=True,   
+        doc="VIP key for short url",
     )
     long_url = Column(
         TEXT,
@@ -51,3 +57,4 @@ class UrlStorage(DeclarativeBase):
     def __repr__(self):
         columns = {column.name: getattr(self, column.name) for column in self.__table__.columns}
         return f'<{self.__tablename__}: {", ".join(map(lambda x: f"{x[0]}={x[1]}", columns.items()))}>'
+

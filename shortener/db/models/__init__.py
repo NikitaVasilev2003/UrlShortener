@@ -1,6 +1,3 @@
-from shortener.db.models.url import UrlStorage
+from sqlalchemy.ext.declarative import declarative_base
 
-
-__all__ = [
-    "UrlStorage",
-]
+Base = declarative_base()

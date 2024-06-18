@@ -58,6 +58,21 @@ async def make_shorter(
     if exist:
         db_url.short_url = utils.url_from_suffix(db_url.short_url)
         return MakeShorterResponse.from_orm(db_url)
+
+    if model.vip_key:
+        vip_key_query = select(exists().where(UrlStorage.vip_key == model.vip_key))
+        vip_key_exists = await session.scalar(vip_key_query)
+        if vip_key_exists:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="VIP key already exists",
+            )
+        short_url = utils.url_from_suffix(model.vip_key)
+        new_url = UrlStorage(long_url=str(model.url), short_url=model.vip_key, vip_key=model.vip_key)
+    else:
+        _, suffix = await get_short(session)
+        new_url = UrlStorage(long_url=str(model.url), short_url=suffix)
+    
     valid_site, message = await utils.check_website_exist(str(model.url))
     if not valid_site:
         raise HTTPException(
