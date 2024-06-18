@@ -1,15 +1,15 @@
-from pydantic import UUID4, BaseModel, Field, HttpUrl, validator
+from pydantic import UUID4, BaseModel, Field, HttpUrl, field_validator
 from url_normalize import url_normalize
-
 
 class MakeShorterRequest(BaseModel):
     url: HttpUrl = Field(title="URL to be shortened")
+    vip_key: str | None = Field(default=None, title="Custom short URL key")
+    time_to_live: int | None = Field(default=1, title="Time to live")
+    time_to_live_unit: str | None = Field(default="DAYS", title="Unit for time to live")
 
-    @classmethod
-    @validator("url", allow_reuse=True, pre=True)
+    @field_validator("url", mode="before")
     def normalize_link(cls, link):
         return url_normalize(link)
-
 
 class MakeShorterResponse(BaseModel):
     short_url: HttpUrl = Field(title="Shortened URL")
@@ -17,3 +17,4 @@ class MakeShorterResponse(BaseModel):
 
     class Config:
         from_attributes = True
+

@@ -1,7 +1,7 @@
 import sys
-print("Current sys.path:", sys.path)
-
 import alembic
+
+print("Current sys.path:", sys.path)
 print("Alembic module path:", alembic.__file__)
 
 # pylint: disable=redefined-outer-name
@@ -22,12 +22,11 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
 from tests.utils import make_alembic_config
-
 import shortener.utils as utils_module
 from shortener.__main__ import get_app
 from shortener.config.utils import get_settings
-from shortener.db.connection import SessionManager
-from shortener.db.models import UrlStorage
+from shortener.db.connection import SessionManager, get_session
+from shortener.db.models import UrlStorage, Base
 
 
 @pytest.fixture(scope="session")
@@ -107,7 +106,8 @@ async def client(migrated_postgres, manager: SessionManager = SessionManager()) 
     app = get_app()
     manager.refresh()  # без вызова метода изменения конфига внутри фикстуры postgres не подтягиваются в класс
     utils_module.check_website_exist = AsyncMock(return_value=(True, "Status code < 400"))
-    yield AsyncClient(app=app, base_url="http://test")
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        yield client
 
 
 @pytest.fixture

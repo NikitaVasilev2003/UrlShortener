@@ -9,9 +9,9 @@ from starlette import status
 
 from shortener import utils
 from shortener.db.connection import get_session
-from shortener.db.models import UrlStorage
+from shortener.db.models import UrlStorage, VIPLink
 from shortener.schemas import MakeShorterRequest, MakeShorterResponse
-
+from shortener.utils import url_from_suffix, check_website_exist
 
 api_router = APIRouter(tags=["Url"])
 
@@ -33,12 +33,12 @@ async def get_short(session: AsyncSession) -> tuple[str, str]:
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_400_BAD_REQUEST: {
-            "description": "Site with this url does not exists or status code of request >= 400",
+            "description": "Site with this url does not exist or status code of request >= 400",
         },
     },
 )
 async def make_shorter(
-    model: MakeShorterRequest = Body(..., example={"url": "https://yandex.ru"}),
+    model: MakeShorterRequest = Body(..., example={"url": "https://yandex.ru", "vip_key": "myvip", "time_to_live": 1, "time_to_live_unit": "DAYS"}),
     session: AsyncSession = Depends(get_session),
 ):
     """
@@ -72,17 +72,17 @@ async def make_shorter(
     else:
         _, suffix = await get_short(session)
         new_url = UrlStorage(long_url=str(model.url), short_url=suffix)
-    
+
     valid_site, message = await utils.check_website_exist(str(model.url))
     if not valid_site:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=message,
         )
-    _, suffix = await get_short(session)
-    new_url = UrlStorage(long_url=str(model.url), short_url=suffix)
+    
     session.add(new_url)
     await session.commit()
     await session.refresh(new_url)
-    new_url.short_url = utils.url_from_suffix(suffix)
+    new_url.short_url = utils.url_from_suffix(new_url.short_url)
     return MakeShorterResponse.from_orm(new_url)
+

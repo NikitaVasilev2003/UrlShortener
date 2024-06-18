@@ -2,7 +2,6 @@ import datetime
 
 from freezegun import freeze_time
 from starlette import status
-
 from shortener.utils import url_from_suffix
 
 
@@ -70,3 +69,4 @@ class TestMakeShorterHandler:
             frozen_datetime.tick(delta=datetime.timedelta(seconds=2))
             response = await client.get(url=response_data["short_url"])
             assert response.status_code == status.HTTP_404_NOT_FOUND
+

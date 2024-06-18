@@ -2,9 +2,9 @@ from sqlalchemy import Column, text
 from sqlalchemy.dialects.postgresql import INTEGER, TEXT, TIMESTAMP, UUID
 from sqlalchemy.sql import func
 
-from shortener.db.models import Base
+from shortener.db import DeclarativeBase
 
-class UrlStorage(Base):
+class UrlStorage(DeclarativeBase):
     __tablename__ = "url_storage"
 
     id = Column(
@@ -18,7 +18,7 @@ class UrlStorage(Base):
         TEXT,
         nullable=True,
         index=True,
-        unique=True,   
+        unique=True,
         doc="VIP key for short url",
     )
     long_url = Column(
@@ -52,6 +52,51 @@ class UrlStorage(Base):
         server_default=func.now(),  # pylint: disable=not-callable
         nullable=False,
         doc="Date and time when string in table was created",
+    )
+
+    def __repr__(self):
+        columns = {column.name: getattr(self, column.name) for column in self.__table__.columns}
+        return f'<{self.__tablename__}: {", ".join(map(lambda x: f"{x[0]}={x[1]}", columns.items()))}>'
+
+class VIPLink(DeclarativeBase):
+    __tablename__ = "vip_links"
+
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        server_default=func.gen_random_uuid(),
+        unique=True,
+        doc="Unique id of the VIP link in table",
+    )
+    short_url = Column(
+        TEXT,
+        nullable=False,
+        unique=True,
+        index=True,
+        doc="VIP short URL key",
+    )
+    long_url = Column(
+        TEXT,
+        nullable=False,
+        doc="Long version of the URL",
+    )
+    secret_key = Column(
+        UUID(as_uuid=True),
+        nullable=False,
+        unique=True,
+        server_default=func.gen_random_uuid(),
+        doc="Secret code to access administrator features for VIP link",
+    )
+    ttl = Column(
+        INTEGER,
+        nullable=False,
+        doc="Time to live in seconds",
+    )
+    created_at = Column(
+        TIMESTAMP(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+        doc="Date and time when the VIP link was created",
     )
 
     def __repr__(self):
