@@ -51,7 +51,6 @@ UrlShortener -> Database: store_vip_link(vip_key, ttl)
 Database -> UrlShortener: return success
 UrlShortener -> User: return short_url, secret_key
 
-
 ### 6. Реализация
 
 ```markdown
